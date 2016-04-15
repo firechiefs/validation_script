@@ -60,7 +60,7 @@ define validation_script (
   # --> FUNCTIONAL TESTING: CREATES TEST SCRIPT
   file { "${script_path}/test_${profile_name}${_file_extension}":
     ensure  => file,
-    content => epp("${profile_name}/templates/${profile_name}${_file_extension}\
+    content => epp("${profile_name}/${profile_name}${_file_extension}\
 .epp", {
       'success_color'   => $success_color,
       'error_color'     => $error_color,
