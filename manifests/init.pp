@@ -57,15 +57,31 @@ define validation_script (
   $error_color    = $validation_settings[color][error][$::osfamily]
   $success_color  = $validation_settings[color][success][$::osfamily]
 
-  # --> FUNCTIONAL TESTING: CREATES TEST SCRIPT
-  file { "${script_path}/test_${profile_name}${_file_extension}":
-    ensure  => file,
-    content => epp("${profile_name}/test_${profile_name}${_file_extension}\
+  # This will check to see if it is a "shared profile" or "local profile"
+  if $profile_name =~ /^profile_/ {# If shared get the script from module path
+    # --> FUNCTIONAL TESTING: CREATES TEST SCRIPT
+    file { "${script_path}/test_${profile_name}${_file_extension}":
+      ensure  => file,
+      content => epp("${profile_name}/test_${profile_name}${_file_extension}\
+.epp", {
+        'success_color'   => $success_color,
+        'error_color'     => $error_color,
+        'validation_data' => $validation_data} # variables you'd like to test
+        ),
+      mode    => '0755',
+    } # End of profile_ name check
+  }
+  else { # This is a local profile get script from local path
+    # --> FUNCTIONAL TESTING: CREATES TEST SCRIPT
+    file { "${script_path}/test_${profile_name}${_file_extension}":
+      ensure  => file,
+      content => epp("profile/tests/test_${profile_name}${_file_extension}\
 .epp", {
       'success_color'   => $success_color,
       'error_color'     => $error_color,
       'validation_data' => $validation_data} # variables you'd like to test
       ),
-    mode    => '0755',
+      mode    => '0755',
+  } # End of profile_ name check
   }
 }
